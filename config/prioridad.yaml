@@ -1,0 +1,98 @@
+# ════════════════════════════════════════════════════════════════
+# LITREV-AI — Escala de prioridad (motor híbrido regex + LLM)
+# ════════════════════════════════════════════════════════════════
+# El motor (litrev_core/prioridad.py) hace lo barato y determinista:
+#   1. Para cada candidato, evalúa cada VOCABULARIO (regex) sobre
+#      "título. abstract" → un flag booleano por vocabulario.
+#   2. Calcula un SCORE continuo (0–100) con los PESOS.
+#   3. Recorre las REGLAS en orden; la primera cuya 'condicion' es
+#      verdadera asigna el nivel (P0–P4) y la razón.
+#   4. Marca como DUDOSO lo que cae en la franja límite o tiene
+#      señales en conflicto → lo reclasifica Claude (LLM) leyendo el
+#      título+abstract contra los criterios de config/proyecto.yaml.
+#
+# Las 'condicion' son expresiones booleanas sobre los nombres de los
+# vocabularios (and / or / not / paréntesis). Config de confianza:
+# este archivo lo escribe el investigador; no aceptar regex de fuentes
+# no confiables.
+#
+# ⚠ PLANTILLA GENÉRICA. Reemplazar los vocabularios [...] por los de
+# tu tema.
+
+# ── Vocabularios de detección (regex, case-insensitive) ──────────
+vocabularios:
+  tema_central:        # el artículo trata directamente del tema
+    - "[regex tema central, ej. \\bliving\\s+kidney\\s+donor\\b]"
+  tema_amplio:         # tema relacionado, más general
+    - "[regex tema amplio]"
+  marco_clave:         # el enfoque/marco teórico que más interesa
+    - "[regex marco clave]"
+  dimension_relevante: # una dimensión secundaria de interés
+    - "[regex dimensión relevante]"
+  exclusion:           # señales de que NO pertenece al corpus
+    - "[regex exclusión]"
+
+# ── Niveles de prioridad ─────────────────────────────────────────
+niveles:
+  P0:
+    label: "Núcleo"
+    descripcion: "[Qué define el núcleo del corpus]"
+    accion: "Lectura completa obligatoria. Procesar primero."
+    color: "E2AFDA"
+  P1:
+    label: "Alta prioridad"
+    descripcion: "[...]"
+    accion: "Lectura completa obligatoria."
+    color: "C6EFCE"
+  P2:
+    label: "Media prioridad"
+    descripcion: "[...]"
+    accion: "Lectura completa tras P0 y P1."
+    color: "BDD7EE"
+  P3:
+    label: "Baja prioridad"
+    descripcion: "[...]"
+    accion: "Lectura selectiva. Procesamiento opcional."
+    color: "FFE699"
+  P4:
+    label: "Descartado"
+    descripcion: "[...]"
+    accion: "Excluir del corpus. No procesar."
+    color: "F4CCCC"
+
+# ── Score continuo (0–100) ───────────────────────────────────────
+# Suma 'base' + peso de cada vocabulario que hizo match; se recorta a [0,100].
+# Es orientativo (complementa la banda P0–P4); útil para ordenar dentro de un nivel.
+score:
+  base: 0
+  pesos:
+    tema_central: 40
+    tema_amplio: 20
+    marco_clave: 35
+    dimension_relevante: 15
+    exclusion: -50
+
+# ── Reglas (árbol de decisión; primera coincidencia gana) ────────
+reglas:
+  - {nivel: P4, razon: "Señal de exclusión sin tema relevante",
+     condicion: "exclusion and not tema_central and not tema_amplio"}
+  - {nivel: P0, razon: "Marco clave + tema central",
+     condicion: "marco_clave and tema_central"}
+  - {nivel: P1, razon: "Tema central con dimensión relevante",
+     condicion: "tema_central and dimension_relevante"}
+  - {nivel: P2, razon: "Tema central",
+     condicion: "tema_central"}
+  - {nivel: P3, razon: "Tema amplio o marco clave sin tema central",
+     condicion: "tema_amplio or marco_clave"}
+  # Regla final implícita: si ninguna coincide → último nivel (P4).
+
+# ── Franja dudosa → reclasificación por LLM ──────────────────────
+franja_dudosa:
+  # Candidatos con score en este rango se marcan dudosos.
+  score_min: 30
+  score_max: 60
+  # Si AMBOS vocabularios de un par hacen match, hay conflicto → dudoso.
+  conflictos:
+    - ["exclusion", "tema_central"]
+  # Candidatos sin texto suficiente (título+abstract muy corto) → dudosos, no P4 ciego.
+  marcar_sin_texto_como_dudoso: true

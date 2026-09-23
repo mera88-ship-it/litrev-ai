@@ -1,0 +1,78 @@
+# ════════════════════════════════════════════════════════════════
+# LITREV-AI — Configuración del proyecto
+# ════════════════════════════════════════════════════════════════
+# Este es el ÚNICO archivo (junto con busqueda.yaml y prioridad.yaml)
+# que cambia entre proyectos. El código nunca se edita para cambiar
+# de tema. Completar todos los campos marcados [...] antes de buscar.
+
+proyecto:
+  nombre: "LITREV-AI — [TEMA POR DEFINIR]"
+  investigador: "[NOMBRE]"
+  fecha_inicio: "[AAAA-MM-DD]"
+  version_framework: "3.0"
+
+# ── Tema y alcance ───────────────────────────────────────────────
+tema:
+  general: "[Descripción del tema en 1–2 frases]"
+  objetivos:
+    - "[Objetivo 1]"
+    - "[Objetivo 2]"
+  preguntas_investigacion:
+    - "[Pregunta de investigación 1]"
+    - "[Pregunta de investigación 2]"
+  alcance_temporal: "[ej. desde 2018, o sin restricción]"
+  alcance_geografico: "[ej. sin restricción]"
+  alcance_disciplinar: "[ej. psicología, educación, ciencia cognitiva]"
+
+# ── Definición de la revisión (Fase 0) ───────────────────────────
+# La completa la Fase 0 (framework/fase0_definicion.md). 'objetivo' es el
+# objetivo de la REVISIÓN (distinto de tema.objetivos, que son los del estudio).
+revision:
+  objetivo: "[Objetivo de la revisión: qué pretende mapear/responder]"
+  tipo: "[scoping | sistemática | narrativa | rápida]"
+  marco: "[marco detectado en Fase 0, p. ej. Población–Concepto–Contexto]"
+  estado_criterios: "[provistos_por_usuario | generados | revisados]"
+
+# ── Criterios de inclusión / exclusión ───────────────────────────
+# En lenguaje natural. Los define/ajusta la Fase 0; los usa Claude para
+# desempatar los candidatos dudosos de la clasificación de prioridad.
+criterios:
+  inclusion:
+    - "[Criterio de inclusión 1]"
+    - "[Criterio de inclusión 2]"
+  exclusion:
+    - "[Criterio de exclusión 1]"
+    - "[Criterio de exclusión 2]"
+
+# ── Descarga de PDFs (cascada multi-fuente) ──────────────────────
+descarga:
+  # Niveles de prioridad que se descargan por defecto (el resto se omite).
+  prioridades_a_descargar: ["P0", "P1", "P2"]
+  tamano_minimo_kb: 10          # PDFs más pequeños se descartan
+  workers: 4                    # descargas en paralelo (cortés: 3–4)
+
+  # Orden de la cadena de fuentes. Se prueba en este orden y gana la
+  # primera que entrega un PDF válido. Quitar/reordenar libremente.
+  # Solo fuentes de acceso abierto legal.
+  fuentes_orden:
+    - openalex_meta   # URL ya recogida en la búsqueda
+    - unpaywall       # email (ya en .env)
+    - europepmc       # sin registro — biomédico
+    - pmc             # sin registro — biomédico
+    - arxiv           # sin registro — CS/IA
+    - biorxiv         # sin registro — preprints
+    - doaj            # sin registro
+    - crossref        # sin registro
+    - core            # requiere CORE_API_KEY (si no, se omite solo)
+
+# ── Modelo LLM (para la Fase 2 y el desempate de prioridad) ──────
+llm:
+  modelo: "claude-opus-4-8"
+  # El desempate y la extracción se ejecutan DENTRO de Claude Code,
+  # no por API. Este campo solo documenta qué modelo se usó.
+
+# ── Umbrales de auditoría (Fase 2) ───────────────────────────────
+auditoria:
+  score_aprobado: 85
+  score_reprocesar: 70
+  score_revision_humana: 50

@@ -1,0 +1,44 @@
+# ─────────────────────────────────────────────────────────────
+# LITREV-AI — qué NO sube a git
+# Regla de oro: el código y la configuración se versionan; el
+# corpus (PDFs, Markdown, JSON, Excel, base de datos) NO.
+# Los datos viven en data/ (local o respaldados en Drive), nunca
+# en el repositorio.
+# ─────────────────────────────────────────────────────────────
+
+# Datos del proyecto (corpus completo)
+data/
+
+# Rastros automáticos de log (el log manual sesion_NNN.md sí se versiona)
+proyecto/*/logs/auto_*.md
+
+# Overrides locales de Claude Code (settings.json compartido SÍ se versiona)
+.claude/settings.local.json
+
+# Credenciales
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# Bases de datos analíticas (Fase 2)
+*.duckdb
+*.duckdb.wal
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Excepción: conservar la estructura de carpetas de datos vacía
+!data/
+!data/**/.gitkeep

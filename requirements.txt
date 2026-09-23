@@ -1,0 +1,18 @@
+# LITREV-AI — Dependencias de Python
+# Instalar: pip install -r requirements.txt
+# Python: probado en 3.14; recomendado 3.12+ en equipos nuevos (amplio soporte de wheels).
+# Pines con «>=» (mínimos probados); pip tomará versiones compatibles más nuevas.
+
+# ── Transversal ──
+python-dotenv>=1.2.2      # carga de credenciales desde .env
+PyYAML>=6.0.2             # lectura de la configuración del proyecto (config/*.yaml)
+requests>=2.32.3          # llamadas HTTP a las APIs académicas
+
+# ── Fase 1: recuperación y selección ──
+openpyxl>=3.1.5           # generación del Excel de candidatos
+pymupdf4llm>=1.27.2.3     # conversión PDF → Markdown
+
+# ── Fase 2: procesamiento y auditoría (se usan más adelante) ──
+pydantic>=2.12.5          # validación de schema del JSON final
+rapidfuzz>=3.14.3         # validación cruzada de títulos contra APIs
+duckdb>=1.3.0             # base de datos analítica

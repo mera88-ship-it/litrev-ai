@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py -3 tools/memoria_session_start.py"
+          }
+        ]
+      }
+    ]
+  }
+}
