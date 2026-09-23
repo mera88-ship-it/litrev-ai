@@ -52,7 +52,13 @@ python -m venv .venv && .venv\Scripts\activate   # Windows
 pip install -r requirements.txt
 
 # 3. Credenciales
-copy .env.example .env        # y completar OPENALEX_EMAIL, etc.
+#    Crear un archivo .env en la raíz del repositorio (está en .gitignore):
+#      OPENALEX_EMAIL=tu@correo.com       recomendado (polite pool de OpenAlex)
+#      UNPAYWALL_EMAIL=tu@correo.com      recomendado (sin él, se omite Unpaywall)
+#      OPENALEX_API_KEY=                  opcional
+#      SEMANTIC_SCHOLAR_API_KEY=          opcional (más límite de consultas)
+#      CORE_API_KEY=                      opcional (clave gratuita en core.ac.uk/services/api)
+#      LITREV_DATA_DIR=                   opcional (corpus fuera del repositorio)
 
 # 4. Definir la revisión (Fase 0): Claude te guía para fijar tema, objetivos y criterios,
 #    y derivar config/proyecto.yaml, busqueda.yaml y prioridad.yaml.

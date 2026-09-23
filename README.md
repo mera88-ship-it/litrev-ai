@@ -58,7 +58,13 @@ python -m venv .venv && .venv\Scripts\activate   # Windows
 pip install -r requirements.txt
 
 # 3. Credentials
-copy .env.example .env        # then fill in OPENALEX_EMAIL, etc.
+#    Create a .env file in the repository root (it is gitignored):
+#      OPENALEX_EMAIL=you@example.com     recommended (OpenAlex polite pool)
+#      UNPAYWALL_EMAIL=you@example.com    recommended (without it, Unpaywall is skipped)
+#      OPENALEX_API_KEY=                  optional
+#      SEMANTIC_SCHOLAR_API_KEY=          optional (higher rate limit)
+#      CORE_API_KEY=                      optional (free key at core.ac.uk/services/api)
+#      LITREV_DATA_DIR=                   optional (corpus outside the repository)
 
 # 4. Define the review (Phase 0): the agent guides you to set topic, objectives and criteria,
 #    and derives config/proyecto.yaml, busqueda.yaml and prioridad.yaml.
